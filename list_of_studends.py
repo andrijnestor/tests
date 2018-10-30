@@ -6,18 +6,15 @@
 #    By: anestor <anestor@student.unit.ua>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/29 23:18:33 by anestor           #+#    #+#              #
-#    Updated: 2018/10/29 23:43:49 by anestor          ###   ########.fr        #
+#    Updated: 2018/10/30 09:05:44 by anestor          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 import os, sys, requests
 import simplejson as json
+import time
 
-if len(sys.argv) != 1:
-    sys.exit()
-else:
-    print "Hello\n"
-
+f = open("testfile", "a")
 args = [
 	'grant_type=client_credentials',
 	'client_id=' + "d44086fe266348e6ec1a6fd07682ace51387bc78f670c5970062f4d66a7d8912",
@@ -38,23 +35,34 @@ else:
 args = [
 'access_token={}'.format(response['access_token']),
 'token_type=bearer',
-'filter[campus_id]=8',
+#'filter[campus_id]=8',
 'page=1'
+#'sort[user_id]=true'
 #'filter[active]=true'
 	]
-n = 1
 
+
+n = 1
 while True:
-    status = requests.get("https://api.intra.42.fr/v2/locations?{}".format("&".join(args)))
+    status = requests.get("https://api.intra.42.fr/v2/campus/8/users?{}".format("&".join(args)))
+    #print status
+    time.sleep(0.5)
     response2 = status.json()
+ #   r = requests.head(link)
+  #  print r.headers['link']
+ #   print response2
     if len(response2) > 0:
         for test in response2:
-            print test["campus_id"]
-            print test["user"]["login"]
-            print test["host"]
+         #   print test["campus_id"]
+         #   print test["user"]["login"]
+         #   print test["host"]
+        #    print test['login']
+            f.write(test['login'] + "\n")
+        print "Page: " + str(n)
         n = n + 1
-        args[3] = "page=" + n
+        args[2] = "page=" + str(n)
     else:
+        f.close()
         break
 
 """
